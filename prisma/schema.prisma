@@ -110,6 +110,9 @@ model Product {
   cartItems     CartItem[]
   wishlistItems WishlistItem[]
   
+  // Order items
+  orderItems    OrderItem[]
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
