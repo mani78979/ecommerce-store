@@ -100,41 +100,17 @@ export async function POST(request: NextRequest) {
         data: {
           orderNumber,
           userId: session.user.id,
-          status: 'pending',
-          paymentStatus: validatedData.paymentMethod === 'cash_on_delivery' ? 'pending' : 'pending',
+          status: 'PENDING',
+          paymentStatus: validatedData.paymentMethod === 'cash_on_delivery' ? 'PENDING' : 'PENDING',
           paymentMethod: validatedData.paymentMethod,
           subtotal: validatedData.subtotal,
           taxAmount: validatedData.taxAmount,
           shippingAmount: validatedData.shippingAmount,
           total: validatedData.total,
           notes: validatedData.notes,
-          shippingAddress: {
-            create: {
-              firstName: validatedData.shippingAddress.firstName,
-              lastName: validatedData.shippingAddress.lastName,
-              email: validatedData.shippingAddress.email,
-              phone: validatedData.shippingAddress.phone,
-              address: validatedData.shippingAddress.address,
-              city: validatedData.shippingAddress.city,
-              state: validatedData.shippingAddress.state,
-              zipCode: validatedData.shippingAddress.zipCode,
-              country: validatedData.shippingAddress.country,
-            }
-          },
-          billingAddress: {
-            create: {
-              firstName: validatedData.billingAddress.firstName,
-              lastName: validatedData.billingAddress.lastName,
-              email: validatedData.billingAddress.email,
-              phone: validatedData.billingAddress.phone,
-              address: validatedData.billingAddress.address,
-              city: validatedData.billingAddress.city,
-              state: validatedData.billingAddress.state,
-              zipCode: validatedData.billingAddress.zipCode,
-              country: validatedData.billingAddress.country,
-            }
-          },
-          orderItems: {
+          shippingAddress: validatedData.shippingAddress,
+          billingAddress: validatedData.billingAddress,
+          items: {
             create: validatedData.items.map(item => ({
               productId: item.productId,
               quantity: item.quantity,
@@ -143,18 +119,16 @@ export async function POST(request: NextRequest) {
           }
         },
         include: {
-          orderItems: {
+          items: {
             include: {
               product: true
             }
-          },
-          shippingAddress: true,
-          billingAddress: true,
+          }
         }
       })
 
       // Clear user's cart after successful order
-      await tx.cart.deleteMany({
+      await tx.cartItem.deleteMany({
         where: { userId: session.user.id }
       })
 
@@ -220,7 +194,7 @@ export async function GET(request: NextRequest) {
       prisma.order.findMany({
         where,
         include: {
-          orderItems: {
+          items: {
             include: {
               product: {
                 select: {
@@ -230,8 +204,7 @@ export async function GET(request: NextRequest) {
                 }
               }
             }
-          },
-          shippingAddress: true,
+          }
         },
         orderBy: {
           createdAt: 'desc'

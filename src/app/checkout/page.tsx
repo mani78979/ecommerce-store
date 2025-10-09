@@ -85,7 +85,9 @@ export default function CheckoutPage() {
   const watchSameAsBilling = watch('sameAsBilling')
 
   useEffect(() => {
-    setSameAsBilling(watchSameAsBilling)
+    if (watchSameAsBilling !== undefined) {
+      setSameAsBilling(watchSameAsBilling)
+    }
   }, [watchSameAsBilling])
 
   if (status === 'loading') {
@@ -134,7 +136,7 @@ export default function CheckoutPage() {
   const shipping = calculateShipping()
   const total = state.summary.subtotal + tax + shipping
 
-  const onSubmit = async (data: CheckoutFormData) => {
+  const onSubmit = async (data: any) => {
     try {
       setIsSubmitting(true)
 

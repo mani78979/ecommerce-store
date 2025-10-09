@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
               email: true,
             }
           },
-          orderItems: {
+          items: {
             include: {
               product: {
                 select: {
@@ -77,8 +77,7 @@ export async function GET(request: NextRequest) {
                 }
               }
             }
-          },
-          shippingAddress: true,
+          }
         },
         orderBy: {
           createdAt: 'desc'

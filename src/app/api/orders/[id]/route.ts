@@ -23,7 +23,7 @@ export async function GET(
         userId: session.user.id, // Ensure user can only access their own orders
       },
       include: {
-        orderItems: {
+        items: {
           include: {
             product: {
               select: {
@@ -36,8 +36,6 @@ export async function GET(
             }
           }
         },
-        shippingAddress: true,
-        billingAddress: true,
         user: {
           select: {
             id: true,
@@ -89,7 +87,7 @@ export async function PATCH(
         id: params.id,
         OR: [
           { userId: session.user.id },
-          { user: { role: 'admin' } } // Allow admin to update any order
+          { user: { role: 'ADMIN' } } // Allow admin to update any order
         ]
       }
     })
@@ -120,7 +118,7 @@ export async function PATCH(
       where: { id: params.id },
       data: updateData,
       include: {
-        orderItems: {
+        items: {
           include: {
             product: {
               select: {
@@ -130,9 +128,7 @@ export async function PATCH(
               }
             }
           }
-        },
-        shippingAddress: true,
-        billingAddress: true,
+        }
       }
     })
 
